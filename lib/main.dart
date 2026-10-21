@@ -17,16 +17,13 @@ class CityPulseApp extends StatelessWidget {
 
       theme: ThemeData(
         useMaterial3: true,
-
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF2563EB),
         ),
-
-        scaffoldBackgroundColor:
-            const Color(0xFFF8FAFC),
+        scaffoldBackgroundColor: const Color(0xFFF8FAFC),
       ),
 
-      // Login screen is the first screen
+      // Common Login/Register entry point
       home: const LoginScreen(),
     );
   }

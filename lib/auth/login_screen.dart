@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+
 import 'register_screen.dart';
 import '../officer/dashboard/officer_dashboard.dart';
+import '../screens/citizen/citizen_home.dart';
+import '../screens/admin/admin_dashboard.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,6 +17,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
 
   bool _obscurePassword = true;
+
+  String selectedRole = 'Citizen';
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +42,10 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // --------------------------------------------------
+
+                  // =====================================================
                   // LOGO
-                  // --------------------------------------------------
+                  // =====================================================
 
                   Center(
                     child: Container(
@@ -86,9 +92,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 36),
 
-                  // --------------------------------------------------
+                  // =====================================================
                   // WELCOME
-                  // --------------------------------------------------
+                  // =====================================================
 
                   const Text(
                     'Welcome Back 👋',
@@ -111,9 +117,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 26),
 
-                  // --------------------------------------------------
+                  // =====================================================
                   // EMAIL
-                  // --------------------------------------------------
+                  // =====================================================
 
                   const Text(
                     'Email',
@@ -134,12 +140,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       filled: true,
                       fillColor: Colors.white,
-                      contentPadding: const EdgeInsets.symmetric(
+                      contentPadding:
+                          const EdgeInsets.symmetric(
                         vertical: 16,
                         horizontal: 12,
                       ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius:
+                            BorderRadius.circular(14),
                         borderSide: BorderSide.none,
                       ),
                     ),
@@ -147,9 +155,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 18),
 
-                  // --------------------------------------------------
+                  // =====================================================
                   // PASSWORD
-                  // --------------------------------------------------
+                  // =====================================================
 
                   const Text(
                     'Password',
@@ -168,8 +176,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       prefixIcon: const Icon(
                         Icons.lock_outline,
                       ),
-
-                      // 👁️ PASSWORD VISIBILITY BUTTON
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword
@@ -178,39 +184,125 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         onPressed: () {
                           setState(() {
-                            _obscurePassword = !_obscurePassword;
+                            _obscurePassword =
+                                !_obscurePassword;
                           });
                         },
                       ),
-
                       filled: true,
                       fillColor: Colors.white,
-                      contentPadding: const EdgeInsets.symmetric(
+                      contentPadding:
+                          const EdgeInsets.symmetric(
                         vertical: 16,
                         horizontal: 12,
                       ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius:
+                            BorderRadius.circular(14),
                         borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 18),
+
+                  // =====================================================
+                  // ROLE
+                  // =====================================================
+
+                  const Text(
+                    'Login As',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  Container(
+                    width: double.infinity,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: selectedRole,
+                        isExpanded: true,
+                        icon: const Icon(
+                          Icons.keyboard_arrow_down,
+                        ),
+                        items: const [
+                          DropdownMenuItem(
+                            value: 'Citizen',
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.person_outline,
+                                  color: Color(0xFF2563EB),
+                                ),
+                                SizedBox(width: 10),
+                                Text('Citizen'),
+                              ],
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Officer',
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.badge_outlined,
+                                  color: Colors.orange,
+                                ),
+                                SizedBox(width: 10),
+                                Text('Officer'),
+                              ],
+                            ),
+                          ),
+                          DropdownMenuItem(
+                            value: 'Admin',
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.admin_panel_settings_outlined,
+                                  color: Colors.green,
+                                ),
+                                SizedBox(width: 10),
+                                Text('Administrator'),
+                              ],
+                            ),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          if (value != null) {
+                            setState(() {
+                              selectedRole = value;
+                            });
+                          }
+                        },
                       ),
                     ),
                   ),
 
                   const SizedBox(height: 26),
 
-                  // --------------------------------------------------
+                  // =====================================================
                   // LOGIN BUTTON
-                  // --------------------------------------------------
+                  // =====================================================
 
                   SizedBox(
                     width: double.infinity,
                     height: 54,
                     child: ElevatedButton(
                       onPressed: () {
-                        // Check empty fields
                         if (_emailController.text.trim().isEmpty ||
-                            _passwordController.text.trim().isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
+                            _passwordController.text
+                                .trim()
+                                .isEmpty) {
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(
                             const SnackBar(
                               content: Text(
                                 'Please enter email and password',
@@ -220,20 +312,37 @@ class _LoginScreenState extends State<LoginScreen> {
                           return;
                         }
 
-                        // Go to Officer Dashboard
+                        // =================================================
+                        // ROLE BASED NAVIGATION
+                        // =================================================
+
+                        Widget destination;
+
+                        if (selectedRole == 'Citizen') {
+                          destination =
+                              const CitizenHome();
+                        } else if (selectedRole == 'Officer') {
+                          destination =
+                              const OfficerDashboard();
+                        } else {
+                          destination =
+                              const AdminDashboard();
+                        }
+
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                const OfficerDashboard(),
+                            builder: (context) => destination,
                           ),
                         );
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2563EB),
+                        backgroundColor:
+                            const Color(0xFF2563EB),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius:
+                              BorderRadius.circular(14),
                         ),
                         elevation: 0,
                       ),
@@ -249,9 +358,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: 18),
 
-                  // --------------------------------------------------
+                  // =====================================================
                   // REGISTER
-                  // --------------------------------------------------
+                  // =====================================================
 
                   Center(
                     child: TextButton(
